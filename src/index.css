@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 244 75% 59%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -30,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 244 75% 59%;
 
     --radius: 0.5rem;
 
@@ -61,8 +62,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 244 75% 59%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -98,4 +99,41 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Adding custom font styles */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-sans;
+}
+
+/* Adding gradient animations */
+.bg-gradient-animation {
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom button styles */
+.btn-gradient {
+  @apply relative overflow-hidden;
+}
+
+.btn-gradient::before {
+  content: "";
+  @apply absolute inset-0 opacity-0 bg-gradient-to-r from-indigo-600 to-pink-500 transition-opacity duration-300;
+}
+
+.btn-gradient:hover::before {
+  @apply opacity-100;
 }
