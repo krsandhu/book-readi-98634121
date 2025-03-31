@@ -1,9 +1,18 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
   return (
     <nav className="border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,12 +36,37 @@ const Navbar = () => {
             </div>
           </div>
           <div className="flex items-center">
-            <Button variant="outline" className="mr-3">
-              Login
-            </Button>
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
-              Get Started
-            </Button>
+            {isLoading ? (
+              <div className="h-10 w-20 bg-gray-200 animate-pulse rounded"></div>
+            ) : user ? (
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Dashboard
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate('/dashboard')}
+                  className="p-0 h-8 w-8 rounded-full overflow-hidden"
+                >
+                  <Avatar>
+                    <AvatarImage src={user.avatarUrl} alt={user.firstName} />
+                    <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button variant="outline" className="mr-3" onClick={() => navigate('/login')}>
+                  Login
+                </Button>
+                <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => navigate('/register')}>
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
