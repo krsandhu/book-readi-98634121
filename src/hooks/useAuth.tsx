@@ -13,11 +13,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<User>;
+  login: (email: string, password: string) => Promise<User | void>;
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
-  loginWithGoogle: () => Promise<User>;
+  loginWithGoogle: () => Promise<User | void>;
   logout: () => Promise<void>;
-  updateUserProfile: (data: Partial<User>) => Promise<User>;
+  updateUserProfile: (data: Partial<User>) => Promise<User | void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

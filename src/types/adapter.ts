@@ -21,3 +21,9 @@ export interface AdapterFormData {
   password?: string;
   token?: string;
 }
+
+export interface IntegrationRequest {
+  platform: string;
+  description?: string;
+  email: string;
+}

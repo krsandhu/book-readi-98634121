@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
+import IntegrationRequestDialog from './IntegrationRequestDialog';
 
 const platforms = [
   {
@@ -42,6 +44,8 @@ const platforms = [
 ];
 
 const Integrations = () => {
+  const [isRequestDialogOpen, setIsRequestDialogOpen] = useState(false);
+
   return (
     <div className="py-16 bg-white" id="integrations">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,12 +84,21 @@ const Integrations = () => {
             Don't see your platform? We're constantly adding new integrations.
           </p>
           <div className="mt-4">
-            <Button variant="outline" className="text-indigo-600 border-indigo-600 hover:bg-indigo-50">
+            <Button 
+              variant="outline" 
+              className="text-indigo-600 border-indigo-600 hover:bg-indigo-50"
+              onClick={() => setIsRequestDialogOpen(true)}
+            >
               Request Integration
             </Button>
           </div>
         </div>
       </div>
+      
+      <IntegrationRequestDialog 
+        open={isRequestDialogOpen} 
+        onOpenChange={setIsRequestDialogOpen} 
+      />
     </div>
   );
 };
