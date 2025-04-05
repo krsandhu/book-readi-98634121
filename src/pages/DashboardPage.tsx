@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,6 +9,8 @@ import DashboardHeader from '@/components/DashboardHeader';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import BookList from '@/components/BookList';
 import ShelfList from '@/components/ShelfList';
+import BookManager from '@/components/BookManager';
+import ShelfManager from '@/components/ShelfManager';
 import { Book, Shelf } from '@/types/adapter';
 import AddBookDialog from '@/components/AddBookDialog';
 import AddShelfDialog from '@/components/AddShelfDialog';
@@ -16,6 +18,7 @@ import AddShelfDialog from '@/components/AddShelfDialog';
 const DashboardPage = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [books, setBooks] = useState<Book[]>([]);
   const [shelves, setShelves] = useState<Shelf[]>([]);
@@ -131,20 +134,37 @@ const DashboardPage = () => {
     }
   }, [user, toast]);
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+  const renderContent = () => {
+    // Determine which content to show based on the current route
+    if (location.pathname === '/dashboard/books') {
+      return (
+        <div>
+          <h1 className="text-2xl font-bold mb-6">Your Books</h1>
+          <BookManager />
+        </div>
+      );
+    } else if (location.pathname === '/dashboard/shelves') {
+      return (
+        <div>
+          <h1 className="text-2xl font-bold mb-6">Your Bookshelves</h1>
+          <ShelfManager />
+        </div>
+      );
+    } else if (location.pathname === '/dashboard/settings') {
+      return (
+        <div>
+          <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
+          <Card>
+            <CardContent className="p-6">
+              <p>Profile and account settings will appear here.</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    } else {
+      // Default dashboard home
+      return (
+        <>
           <div className="mb-8">
             <h1 className="text-2xl font-bold">Welcome back, {user?.firstName}</h1>
             <p className="text-gray-600">Manage your books and bookshelves</p>
@@ -262,6 +282,26 @@ const DashboardPage = () => {
               />
             )}
           </div>
+        </>
+      );
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <DashboardHeader />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          {renderContent()}
         </main>
       </div>
       

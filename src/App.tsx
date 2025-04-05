@@ -34,7 +34,10 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/dashboard/*" element={<DashboardPage />} />
+            <Route path="/dashboard/books" element={<DashboardPage />} />
+            <Route path="/dashboard/shelves" element={<DashboardPage />} />
+            <Route path="/dashboard/categories" element={<CategoriesPage />} />
+            <Route path="/dashboard/settings" element={<DashboardPage />} />
             <Route path="/books/:bookId" element={<BookDetailPage />} />
             <Route path="/shelves/:shelfId" element={<ShelfDetailPage />} />
             <Route path="/public-shelves" element={<PublicShelvesPage />} />

@@ -3,8 +3,9 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Puzzle, 
-  ListTodo, 
+  BookOpen, 
+  Library, 
+  TagIcon, 
   Settings, 
   PlusCircle
 } from 'lucide-react';
@@ -23,14 +24,19 @@ const DashboardSidebar = () => {
       path: '/dashboard',
     },
     {
-      name: 'Adapters',
-      icon: Puzzle,
-      path: '/dashboard/adapters',
+      name: 'Books',
+      icon: BookOpen,
+      path: '/dashboard/books',
     },
     {
-      name: 'Issues',
-      icon: ListTodo,
-      path: '/dashboard/issues',
+      name: 'Shelves',
+      icon: Library,
+      path: '/dashboard/shelves',
+    },
+    {
+      name: 'Categories',
+      icon: TagIcon,
+      path: '/dashboard/categories',
     },
     {
       name: 'Settings',
@@ -50,7 +56,7 @@ const DashboardSidebar = () => {
     <aside className="hidden lg:flex lg:flex-col w-64 border-r border-gray-200 bg-white">
       <div className="flex h-16 items-center border-b px-6">
         <h1 className="font-bold text-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text">
-          Issue Sync
+          BookReadi
         </h1>
       </div>
       <div className="flex flex-col overflow-y-auto flex-1 p-4">
@@ -73,15 +79,15 @@ const DashboardSidebar = () => {
         
         <Separator className="my-4" />
         
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => navigate('/dashboard/shelves/new')}>
           <PlusCircle className="h-4 w-4" />
-          Add New Adapter
+          Add New Shelf
         </Button>
       </div>
       
       <div className="border-t border-gray-200 p-4">
         <div className="rounded-md bg-gray-50 p-3">
-          <h3 className="text-sm font-medium">Premium Plan</h3>
+          <h3 className="text-sm font-medium">BookReadi Premium</h3>
           <p className="mt-1 text-xs text-gray-500">
             You have unlimited access to all features.
           </p>

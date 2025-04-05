@@ -49,12 +49,13 @@ const DashboardHeader = () => {
             <SheetContent side="left" className="p-0">
               {/* Mobile navigation menu content */}
               <div className="p-6">
-                <h2 className="text-lg font-semibold">Issue Sync</h2>
+                <h2 className="text-lg font-semibold">BookReadi</h2>
                 <nav className="mt-6 space-y-1">
                   <a href="/dashboard" className="block py-2 px-4 rounded-md bg-indigo-50 text-indigo-700 font-medium">Dashboard</a>
-                  <a href="/adapters" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Adapters</a>
-                  <a href="/issues" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Issues</a>
-                  <a href="/settings" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
+                  <a href="/dashboard/books" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Books</a>
+                  <a href="/dashboard/shelves" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Shelves</a>
+                  <a href="/dashboard/categories" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Categories</a>
+                  <a href="/dashboard/settings" className="block py-2 px-4 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
                 </nav>
               </div>
             </SheetContent>
@@ -62,7 +63,7 @@ const DashboardHeader = () => {
           
           <div className="hidden lg:block">
             <h1 className="font-bold text-2xl bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text">
-              Issue Sync
+              BookReadi
             </h1>
           </div>
         </div>
