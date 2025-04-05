@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import BookList from '@/components/BookList';
 import ShelfList from '@/components/ShelfList';
 import BookManager from '@/components/BookManager';
 import ShelfManager from '@/components/ShelfManager';
+import AccountSettings from '@/components/AccountSettings';
 import { Book, Shelf } from '@/types/adapter';
 import AddBookDialog from '@/components/AddBookDialog';
 import AddShelfDialog from '@/components/AddShelfDialog';
@@ -151,16 +151,7 @@ const DashboardPage = () => {
         </div>
       );
     } else if (location.pathname === '/dashboard/settings') {
-      return (
-        <div>
-          <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
-          <Card>
-            <CardContent className="p-6">
-              <p>Profile and account settings will appear here.</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
+      return <AccountSettings />;
     } else {
       // Default dashboard home
       return (
