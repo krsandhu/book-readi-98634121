@@ -33,12 +33,12 @@ const ShelfList = ({ shelves, onShelfClick, onEdit, onDelete }: ShelfListProps) 
               </div>
               <div className="flex items-center space-x-1">
                 {shelf.isPublic ? (
-                  <Globe className="h-4 w-4 text-green-600" title="Public Shelf" />
+                  <Globe className="h-4 w-4 text-green-600" aria-label="Public Shelf" />
                 ) : (
-                  <Lock className="h-4 w-4 text-gray-600" title="Private Shelf" />
+                  <Lock className="h-4 w-4 text-gray-600" aria-label="Private Shelf" />
                 )}
                 {shelf.sharedWith && shelf.sharedWith.length > 0 && (
-                  <Users className="h-4 w-4 text-indigo-600" title="Shared with others" />
+                  <Users className="h-4 w-4 text-indigo-600" aria-label="Shared with others" />
                 )}
               </div>
             </CardTitle>
