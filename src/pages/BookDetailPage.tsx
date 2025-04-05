@@ -8,8 +8,9 @@ import { Pencil, Trash2, BookOpen, Share } from "lucide-react";
 import { useAuth } from '@/hooks/useAuth';
 import DashboardHeader from '@/components/DashboardHeader';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import { Book } from '@/types/adapter';
+import { Book, BookFormData, Shelf } from '@/types/adapter';
 import BookSharingDialog from '@/components/BookSharingDialog';
+import BookEditDialog from '@/components/BookEditDialog';
 
 const BookDetailPage = () => {
   const { bookId } = useParams<{ bookId: string }>();
@@ -17,8 +18,10 @@ const BookDetailPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [book, setBook] = useState<Book | null>(null);
+  const [shelves, setShelves] = useState<Shelf[]>([]);
   const [isLoadingBook, setIsLoadingBook] = useState(true);
   const [isSharingDialogOpen, setIsSharingDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -32,11 +35,33 @@ const BookDetailPage = () => {
   }, [user, isLoading, navigate, toast]);
 
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchData = async () => {
       try {
         // This would be an API call to your backend
         // For demo purposes, we'll use mock data
         await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Mock shelves
+        const mockShelves: Shelf[] = [
+          {
+            id: '1',
+            name: 'Fiction',
+            description: 'My fiction collection',
+            isPublic: true,
+            createdAt: new Date().toISOString(),
+            ownerId: user?.id || '',
+            category: 'Fiction',
+          },
+          {
+            id: '2',
+            name: 'Non-Fiction',
+            description: 'My non-fiction books',
+            isPublic: false,
+            createdAt: new Date().toISOString(),
+            ownerId: user?.id || '',
+            category: 'Non-Fiction',
+          }
+        ];
         
         // Mock book data
         const mockBook: Book = {
@@ -55,6 +80,7 @@ const BookDetailPage = () => {
           readStatus: 'completed'
         };
         
+        setShelves(mockShelves);
         setBook(mockBook);
       } catch (error) {
         console.error('Failed to fetch book:', error);
@@ -69,9 +95,55 @@ const BookDetailPage = () => {
     };
 
     if (user && bookId) {
-      fetchBook();
+      fetchData();
     }
   }, [user, bookId, toast]);
+
+  const handleUpdateBook = (bookId: string, updatedBookData: BookFormData) => {
+    if (!book) return;
+    
+    // In a real app, this would be an API call to update the book
+    // For demo purposes, we'll just update the local state
+    const updatedBook: Book = {
+      ...book,
+      ...updatedBookData,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setBook(updatedBook);
+    
+    toast({
+      title: "Book updated",
+      description: "Book details have been successfully updated.",
+    });
+  };
+
+  const handleDeleteBook = () => {
+    // In a real app, this would be an API call to delete the book
+    toast({
+      title: "Book deleted",
+      description: "Book has been removed from your collection.",
+    });
+    navigate('/dashboard/books');
+  };
+
+  const handleReadStatusChange = (status: 'not_started' | 'in_progress' | 'completed') => {
+    if (!book) return;
+    
+    // Update the book's read status
+    const updatedBook = {
+      ...book,
+      readStatus: status,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setBook(updatedBook);
+    
+    toast({
+      title: "Status updated",
+      description: `Book marked as "${status.replace('_', ' ')}".`,
+    });
+  };
 
   if (isLoading || isLoadingBook) {
     return (
@@ -109,11 +181,11 @@ const BookDetailPage = () => {
                   <Share className="h-4 w-4 mr-2" />
                   Share
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button variant="destructive">
+                <Button variant="destructive" onClick={handleDeleteBook}>
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete
                 </Button>
@@ -138,12 +210,33 @@ const BookDetailPage = () => {
                       )}
                     </div>
                     <div className="mt-4 space-y-2">
-                      <Button variant="outline" className="w-full">
-                        Mark as Reading
-                      </Button>
-                      <Button variant="outline" className="w-full">
-                        Mark as Completed
-                      </Button>
+                      {book.readStatus === 'not_started' && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleReadStatusChange('in_progress')}
+                        >
+                          Mark as Reading
+                        </Button>
+                      )}
+                      {book.readStatus === 'in_progress' && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleReadStatusChange('completed')}
+                        >
+                          Mark as Completed
+                        </Button>
+                      )}
+                      {book.readStatus === 'completed' && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleReadStatusChange('not_started')}
+                        >
+                          Mark as Not Started
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -203,6 +296,16 @@ const BookDetailPage = () => {
         bookId={book.id}
         title={book.title}
       />
+      
+      {isEditDialogOpen && book && (
+        <BookEditDialog
+          book={book}
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          shelves={shelves}
+          onSave={handleUpdateBook}
+        />
+      )}
     </div>
   );
 };
