@@ -1,4 +1,3 @@
-
 export interface Book {
   id: string;
   title: string;
@@ -42,6 +41,7 @@ export interface BookFormData {
   category?: string;
   shelfId: string;
   pageCount?: number;
+  readStatus?: 'not_started' | 'in_progress' | 'completed';
 }
 
 export interface ShelfFormData {
