@@ -7,11 +7,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import FeaturesPage from "./pages/FeaturesPage";
-import IntegrationsPage from "./pages/IntegrationsPage";
+import CategoriesPage from "./pages/CategoriesPage";
 import PricingPage from "./pages/PricingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import BookDetailPage from "./pages/BookDetailPage";
+import ShelfDetailPage from "./pages/ShelfDetailPage";
+import PublicShelvesPage from "./pages/PublicShelvesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,12 +29,15 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/integrations" element={<IntegrationsPage />} />
+            <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/*" element={<DashboardPage />} />
+            <Route path="/books/:bookId" element={<BookDetailPage />} />
+            <Route path="/shelves/:shelfId" element={<ShelfDetailPage />} />
+            <Route path="/public-shelves" element={<PublicShelvesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

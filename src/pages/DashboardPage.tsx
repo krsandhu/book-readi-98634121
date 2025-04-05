@@ -7,15 +7,21 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import DashboardHeader from '@/components/DashboardHeader';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import AdapterList from '@/components/AdapterList';
-import { Adapter } from '@/types/adapter';
+import BookList from '@/components/BookList';
+import ShelfList from '@/components/ShelfList';
+import { Book, Shelf } from '@/types/adapter';
+import AddBookDialog from '@/components/AddBookDialog';
+import AddShelfDialog from '@/components/AddShelfDialog';
 
 const DashboardPage = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [adapters, setAdapters] = useState<Adapter[]>([]);
-  const [isLoadingAdapters, setIsLoadingAdapters] = useState(true);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [shelves, setShelves] = useState<Shelf[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isAddBookDialogOpen, setIsAddBookDialogOpen] = useState(false);
+  const [isAddShelfDialogOpen, setIsAddShelfDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -29,47 +35,99 @@ const DashboardPage = () => {
   }, [user, isLoading, navigate, toast]);
 
   useEffect(() => {
-    // Fetch adapters from API
-    const fetchAdapters = async () => {
+    // Fetch books and shelves from API
+    const fetchData = async () => {
       try {
         // This would be an API call to your backend
         // For demo purposes, we'll use mock data
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const mockAdapters: Adapter[] = [
+        const mockShelves: Shelf[] = [
           {
             id: '1',
-            name: 'Jira',
-            description: 'Connect to Jira issue tracking system',
-            apiKey: 'jira_api_123',
-            active: true,
+            name: 'Fiction',
+            description: 'My fiction collection',
+            isPublic: true,
             createdAt: new Date().toISOString(),
+            ownerId: user?.id || '',
+            category: 'Fiction',
           },
           {
             id: '2',
-            name: 'OpenProject',
-            description: 'Connect to OpenProject issue tracking system',
-            apiKey: 'open_project_456',
-            active: true,
+            name: 'Non-Fiction',
+            description: 'My non-fiction books',
+            isPublic: false,
             createdAt: new Date().toISOString(),
+            ownerId: user?.id || '',
+            category: 'Non-Fiction',
+            sharedWith: ['user123', 'user456']
           }
         ];
         
-        setAdapters(mockAdapters);
+        const mockBooks: Book[] = [
+          {
+            id: '1',
+            title: 'The Great Gatsby',
+            author: 'F. Scott Fitzgerald',
+            description: 'A novel about the American Dream set in the Roaring Twenties.',
+            coverImageUrl: 'https://example.com/gatsby.jpg',
+            isbn: '9780743273565',
+            category: 'Fiction',
+            shelfId: '1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            addedByUserId: user?.id || '',
+            pageCount: 180,
+            readStatus: 'completed'
+          },
+          {
+            id: '2',
+            title: 'To Kill a Mockingbird',
+            author: 'Harper Lee',
+            description: 'A novel about racial inequality and moral growth in the American South.',
+            coverImageUrl: 'https://example.com/mockingbird.jpg',
+            isbn: '9780061120084',
+            category: 'Fiction',
+            shelfId: '1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            addedByUserId: user?.id || '',
+            pageCount: 281,
+            readStatus: 'in_progress'
+          },
+          {
+            id: '3',
+            title: 'Sapiens: A Brief History of Humankind',
+            author: 'Yuval Noah Harari',
+            description: 'A brief history of human evolution and civilization.',
+            coverImageUrl: 'https://example.com/sapiens.jpg',
+            isbn: '9780062316097',
+            category: 'Non-Fiction',
+            shelfId: '2',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            addedByUserId: user?.id || '',
+            pageCount: 443,
+            readStatus: 'not_started'
+          }
+        ];
+        
+        setShelves(mockShelves);
+        setBooks(mockBooks);
       } catch (error) {
-        console.error('Failed to fetch adapters:', error);
+        console.error('Failed to fetch data:', error);
         toast({
           title: "Error",
-          description: "Failed to load adapters. Please try again.",
+          description: "Failed to load your books and shelves. Please try again.",
           variant: "destructive",
         });
       } finally {
-        setIsLoadingAdapters(false);
+        setIsLoadingData(false);
       }
     };
 
     if (user) {
-      fetchAdapters();
+      fetchData();
     }
   }, [user, toast]);
 
@@ -89,72 +147,153 @@ const DashboardPage = () => {
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mb-8">
             <h1 className="text-2xl font-bold">Welcome back, {user?.firstName}</h1>
-            <p className="text-gray-600">Manage your issue tracking integrations</p>
+            <p className="text-gray-600">Manage your books and bookshelves</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle>Active Adapters</CardTitle>
-                <CardDescription>Your current connected issue trackers</CardDescription>
+                <CardTitle>Your Books</CardTitle>
+                <CardDescription>Total books in your collection</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{adapters.filter(a => a.active).length}</div>
+                <div className="text-3xl font-bold">{books.length}</div>
                 <p className="text-sm text-gray-500 mt-2">
-                  {adapters.filter(a => a.active).length === 0 ? "No active adapters" : 
-                   adapters.filter(a => a.active).length === 1 ? "1 adapter is currently active" :
-                   `${adapters.filter(a => a.active).length} adapters are currently active`}
+                  {books.length === 0 ? "No books added yet" : 
+                   books.length === 1 ? "1 book in your collection" :
+                   `${books.length} books in your collection`}
                 </p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader>
-                <CardTitle>Issues Tracked</CardTitle>
-                <CardDescription>Total issues across all platforms</CardDescription>
+                <CardTitle>Reading Progress</CardTitle>
+                <CardDescription>Your current reading status</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">247</div>
+                <div className="text-3xl font-bold">
+                  {books.filter(b => b.readStatus === 'in_progress').length}
+                </div>
                 <p className="text-sm text-gray-500 mt-2">
-                  Last synced: {new Date().toLocaleTimeString()}
+                  Books currently being read
                 </p>
+                <div className="mt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Not Started</span>
+                    <span>{books.filter(b => b.readStatus === 'not_started').length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>In Progress</span>
+                    <span>{books.filter(b => b.readStatus === 'in_progress').length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Completed</span>
+                    <span>{books.filter(b => b.readStatus === 'completed').length}</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader>
-                <CardTitle>Subscription</CardTitle>
-                <CardDescription>Your current plan</CardDescription>
+                <CardTitle>Bookshelves</CardTitle>
+                <CardDescription>Your organized collections</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-md font-semibold text-indigo-600">Premium</div>
+                <div className="text-3xl font-bold">{shelves.length}</div>
                 <p className="text-sm text-gray-500 mt-2">
-                  One-time payment
+                  {shelves.length === 0 ? "No shelves created yet" : 
+                   shelves.length === 1 ? "1 bookshelf" :
+                   `${shelves.length} bookshelves`}
                 </p>
-                <Button className="mt-4 w-full" variant="outline">
-                  Manage Subscription
+                <Button className="mt-4 w-full" onClick={() => setIsAddShelfDialogOpen(true)}>
+                  Create New Shelf
                 </Button>
               </CardContent>
             </Card>
           </div>
           
           <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4">Your Adapters</h2>
-            <AdapterList 
-              adapters={adapters} 
-              isLoading={isLoadingAdapters} 
-              onUpdate={(updatedAdapter) => {
-                setAdapters(adapters.map(adapter => 
-                  adapter.id === updatedAdapter.id ? updatedAdapter : adapter
-                ));
-              }}
-              onDelete={(adapterId) => {
-                setAdapters(adapters.filter(adapter => adapter.id !== adapterId));
-              }}
-            />
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Your Bookshelves</h2>
+              <Button onClick={() => setIsAddShelfDialogOpen(true)}>
+                Add Shelf
+              </Button>
+            </div>
+            
+            {isLoadingData ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : (
+              <ShelfList 
+                shelves={shelves}
+                onShelfClick={(shelfId) => navigate(`/shelves/${shelfId}`)}
+                onEdit={(shelfId) => {
+                  // Handle edit
+                  console.log('Edit shelf', shelfId);
+                }}
+                onDelete={(shelfId) => {
+                  // Handle delete
+                  console.log('Delete shelf', shelfId);
+                  setShelves(shelves.filter(shelf => shelf.id !== shelfId));
+                }}
+              />
+            )}
+          </div>
+          
+          <div className="mt-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Recent Books</h2>
+              <Button onClick={() => setIsAddBookDialogOpen(true)}>
+                Add Book
+              </Button>
+            </div>
+            
+            {isLoadingData ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : (
+              <BookList 
+                books={books}
+                onBookClick={(bookId) => navigate(`/books/${bookId}`)}
+              />
+            )}
           </div>
         </main>
       </div>
+      
+      <AddBookDialog 
+        open={isAddBookDialogOpen} 
+        onOpenChange={setIsAddBookDialogOpen}
+        shelves={shelves}
+        onAddBook={(newBook) => {
+          // Handle adding new book
+          setBooks([...books, { 
+            ...newBook, 
+            id: (books.length + 1).toString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            addedByUserId: user?.id || ''
+          }]);
+        }}
+      />
+      
+      <AddShelfDialog 
+        open={isAddShelfDialogOpen} 
+        onOpenChange={setIsAddShelfDialogOpen}
+        onAddShelf={(newShelf) => {
+          // Handle adding new shelf
+          setShelves([...shelves, { 
+            ...newShelf, 
+            id: (shelves.length + 1).toString(),
+            createdAt: new Date().toISOString(),
+            ownerId: user?.id || ''
+          }]);
+        }}
+      />
     </div>
   );
 };
