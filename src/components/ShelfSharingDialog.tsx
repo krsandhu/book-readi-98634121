@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +15,8 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
-import {
-  Switch,
-  Label,
-} from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Globe, Link, Users, Copy, Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -64,10 +61,8 @@ const ShelfSharingDialog = ({
   };
   
   const handleShareByEmail = () => {
-    // This would send an invitation to the provided email
     console.log(`Sharing shelf ${shelfId} with ${email}`);
     
-    // Add to shared users
     setSharedUsers([...sharedUsers, email]);
     
     toast({
@@ -83,7 +78,6 @@ const ShelfSharingDialog = ({
   };
 
   const handleSaveChanges = () => {
-    // This would update the shelf sharing settings
     console.log(`Updating shelf ${shelfId} - Public: ${makePublic}, Shared with: ${sharedUsers.join(', ')}`);
     
     toast({
